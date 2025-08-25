@@ -183,3 +183,9 @@ th {
   object-fit: cover;
   border-radius: 8px;
 }
+
+.card-code {
+  font-size: 0.85rem;
+  color: #666;
+  margin-top: 4px;
+}
