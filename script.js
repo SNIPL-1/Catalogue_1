@@ -102,7 +102,7 @@ function renderItems(category) {
     const itemName = allData.find(row => row["Item Code"] === code)?.["Item Name"] || "";
     div.innerHTML = `
       <img src="${img}" alt="${code}" class="card-image"/>
-      <div class="card-title">${itemName || code}</div>
+      <div class="card-title">${itemName && code}</div>
     `;
     div.onclick = () => renderItemDetail(code);
     grid.appendChild(div);
@@ -206,4 +206,5 @@ function clearSearch() {
   document.getElementById("searchInput").value = "";
   renderCategories();
 }
+
 
