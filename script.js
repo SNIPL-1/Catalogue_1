@@ -94,15 +94,24 @@ function renderItems(category) {
   container.innerHTML = `<h2>${category}</h2><div class="grid"></div>`;
   const grid = container.querySelector(".grid");
 
-  const items = [...new Set(allData.filter(row => row["Category"] === category).map(row => row["Item Code"]))];
+  const items = [...new Set(
+    allData
+      .filter(row => row["Category"] === category)
+      .map(row => row["Item Code"])
+  )];
+
   items.forEach(code => {
     const div = document.createElement("div");
     div.className = "card";
     const img = imageMap[code] || "default.jpg";
-    const itemName = allData.find(row => row["Item Code"] === code)?.["Item Name"] || "";
+    const item = allData.find(row => row["Item Code"] === code);
+    const itemName = item?.["Item Name"] || "";
+    
+    // 🔹 Added item code display under name
     div.innerHTML = `
       <img src="${img}" alt="${code}" class="card-image"/>
-      <div class="card-title">${itemName && code}</div>
+      <div class="card-title">${itemName}</div>
+      <div class="card-code">Code: ${code}</div>
     `;
     div.onclick = () => renderItemDetail(code);
     grid.appendChild(div);
@@ -206,5 +215,6 @@ function clearSearch() {
   document.getElementById("searchInput").value = "";
   renderCategories();
 }
+
 
 
