@@ -114,7 +114,12 @@ function renderItemDetail(itemCode) {
   currentItemCode = itemCode;
   renderBreadcrumb("item");
   const container = document.getElementById("catalogue");
-  const entries = allData.filter(row => row["Item Code"] === itemCode);
+
+  // 🔹 Filter by BOTH category and item code
+  const entries = allData.filter(
+    row => row["Item Code"] === itemCode && row["Category"] === currentCategory
+  );
+
   const first = entries[0];
   const img = imageMap[itemCode] || "default.jpg";
 
@@ -132,24 +137,34 @@ function renderItemDetail(itemCode) {
         <th>MOQ</th>
         <th>WhatsApp</th>
       </tr>
-      ${entries.map(entry => {
-        const msg = encodeURIComponent(
-          `Hi, I’m interested in this tool:\nItem: ${first["Item Name"]}\nVariant Code: ${entry["Variant Code"]}\nDescription: ${entry["Description"]}\nPrice: ${entry["Price/Unit"]}`
-        );
-        return `
-          <tr>
-            <td>${entry["Variant Code"]}</td>
-            <td>${entry["Description"]}</td>
-            <td>${entry["Price/Unit"]}</td>
-            <td>${entry["Unit"]}</td>
-            <td>${entry["MOQ"]}</td>
-            <td><a class="wa-link" target="_blank" href="https://wa.me/917986297302?text=${msg}"><i class="fab fa-whatsapp"></i> Chat</a></td>
-          </tr>
-        `;
-      }).join("")}
+      ${entries
+        .reduce((unique, entry) => {
+          // Ensure unique Variant Codes
+          if (!unique.some(e => e["Variant Code"] === entry["Variant Code"])) {
+            unique.push(entry);
+          }
+          return unique;
+        }, [])
+        .map(entry => {
+          const msg = encodeURIComponent(
+            `Hi, I’m interested in this tool:\nItem: ${first["Item Name"]}\nVariant Code: ${entry["Variant Code"]}\nDescription: ${entry["Description"]}\nPrice: ${entry["Price/Unit"]}`
+          );
+          return `
+            <tr>
+              <td>${entry["Variant Code"]}</td>
+              <td>${entry["Description"]}</td>
+              <td>${entry["Price/Unit"]}</td>
+              <td>${entry["Unit"]}</td>
+              <td>${entry["MOQ"]}</td>
+              <td><a class="wa-link" target="_blank" href="https://wa.me/917986297302?text=${msg}"><i class="fab fa-whatsapp"></i> Chat</a></td>
+            </tr>
+          `;
+        })
+        .join("")}
     </table>
   `;
 }
+
 
 /* ---------- Global Search ---------- */
 function performSearch() {
@@ -191,3 +206,4 @@ function clearSearch() {
   document.getElementById("searchInput").value = "";
   renderCategories();
 }
+
